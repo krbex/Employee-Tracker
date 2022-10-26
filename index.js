@@ -1,6 +1,6 @@
 const { prompt } = require('inquirer');
 const { default: ListPrompt } = require('inquirer/lib/prompts/list');
-const db = require('./db');
+const db = require('./db/table');
 require('console.table');
 
 init();
