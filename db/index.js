@@ -25,6 +25,10 @@ class awfulTable {
         return this.connection.promise().query("SELECT role.id, role.title FROM roles;");
     }
 
+    updateRole() {
+        return this.connection.promise().query("UPDATE employee SET role_id = ? WHERE id = ?", [roleId, employeeId]);
+    }
+
     findEmployeesDepartment() {
         return this.connection.promise().query("SELECT department.id, department.name FROM department;")
     }

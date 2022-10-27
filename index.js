@@ -1,6 +1,6 @@
 const { prompt } = require('inquirer');
 const { default: ListPrompt } = require('inquirer/lib/prompts/list');
-const db = require('./db/table');
+const db = require('./db/index');
 require('console.table');
 
 init();
@@ -48,21 +48,18 @@ function init() {
         }
     ]).then(res => {
         let input = res.choice;
-        switch(input) {
+        switch (input) {
             case 'VIEW_EMPLOYEES':
                 viewEmployees();
                 break;
             case 'ADD_EMPLOYEE':
                 addEmployee();
                 break;
-            case 'UPDATE_EMPLOYEE_ROLE':
-                updateEmployee();
+            case 'VIEW_ROLES':
+                viewRole();
                 break;
             case 'UPDATE_EMPLOYEE_ROLE':
                 updateRole();
-                break;
-            case 'VIEW_ROLES':
-                viewRole();
                 break;
             case 'ADD_ROLE':
                 addRole();
@@ -75,18 +72,17 @@ function init() {
                 break;
             case 'QUIT':
                 quit();
-        }
-    })
-}
+        };
+    });
+};
 
 // Views all employees
 function viewEmployees() {
     db.findEmployees().then(([rows]) => {
         let employees = rows;
-        console.log('\n');
         console.table(employees)
     }).then(() => init());
-}
+};
 
 // Add employee
 function addEmployee() {
@@ -150,12 +146,77 @@ function addEmployee() {
     });
 };
 
+// View roles
+function viewRole() {
+    db.findRoles()
+        .then(([rows]) => {
+            let roles = rows;
+            console.table(roles);
+        }).then(() => init());
+};
+
+// Update role
+function updateRole() {
+    db.findEmployees().then(([rows]) => {
+        let employees = rows;
+        const employeeChoice = employees.map(({ id, first_name, last_name }) => ({
+            name: `${first_name} ${last_name}`,
+            value: id
+        }));
+
+        prompt([
+            {
+                type: 'list',
+                name: 'employeeId',
+                message: 'Which employee would you like to update?',
+                choices: employeeChoice
+            }
+        ]).then(res => {
+            let employeeId = res.employeeId;
+            db.findRoles().then(([rows]) => {
+                let roles = rows;
+                const roleChoice = roles.map(({ id, title }) => ({
+                    name: title,
+                    value: id
+                }));
+
+                prompt([
+                    {
+                        type: 'list',
+                        name: 'roleId',
+                        message: 'Which role do you want this employee assigned to?',
+                        choices: roleChoice
+                    }
+                ]).then(res => db.updateRole(employeeId, res.roleId))
+                .then(() => console.log('Update successful')).then(() => init());
+            });
+        });
+    });
+};
 
 // View departments
 function viewDepartments() {
     db.findAllDepartments().then(([rows]) => {
         let departments = rows;
-        console.log('\n');
         console.table(departments);
-    }).then(() => init())
-}
+    }).then(() => init());
+};
+
+// Add department
+function addDepartment() {
+    prompt([
+        {
+            type: 'input',
+            name: 'name',
+            message: 'What department would you like to add?'
+        }
+    ]).then(res => {
+        db.createDepartment(res).then(() => console.log('Department added'))
+        .then(() => init())
+    });
+};
+
+// Quit
+function quit() {
+    process.exit();
+};
