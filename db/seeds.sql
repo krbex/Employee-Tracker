@@ -1,4 +1,4 @@
-INSERT INTO department (id, department_name)
+INSERT INTO department (id, name)
 VALUES  (1, 'Accounting'),
         (2, 'Finance'),
         (3, 'Legal'),
@@ -6,7 +6,7 @@ VALUES  (1, 'Accounting'),
         (5, 'Marketing'),
         (6, 'Operations');
 
-INSERT INTO roles (id, title, salary, department_id)
+INSERT INTO role (id, title, salary, department_id)
 VALUES  (11, 'Lawyer', 75000, 3),
         (12, 'Accountant', 65000, 1),
         (13, 'Business Development', 45000, 4),
@@ -16,7 +16,7 @@ VALUES  (11, 'Lawyer', 75000, 3),
 
 INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
 VALUES  (101, 'Dalinar', 'Kholin', 6, NULL),
-        (102, 'Adolin', 'Kholin', 1, 101),
+        (102, 'Szeth', 'Vallano', 1, 101),
         (103, 'Kaladin', 'Stormblessed', 3, 101),
         (104, 'Torol', 'Sadeas', 2, NULL),
         (105, 'Rysn', 'Ftori', 4, NULL),

@@ -1,6 +1,6 @@
 const { prompt } = require('inquirer');
 const { default: ListPrompt } = require('inquirer/lib/prompts/list');
-const db = require('./db/index');
+const db = require('./db');
 require('console.table');
 
 init();
@@ -62,7 +62,7 @@ function init() {
                 updateRole();
                 break;
             case 'ADD_ROLE':
-                addRole();
+                createRole();
                 break;
             case 'VIEW_DEPARTMENTS':
                 viewDepartments();
@@ -155,6 +155,38 @@ function viewRole() {
         }).then(() => init());
 };
 
+// Add role
+function createRole() {
+    db.viewDepartments().then().then(([rows]) => {
+        let departments = rows;
+        const departmentChoice = departments.map(({ id, name }) => ({
+            name: name,
+            value: id
+        }));
+
+        prompt([
+            {
+                type: 'input',
+                message: 'What is the name of the role',
+                name: 'title'
+            },
+            {
+                type: 'input',
+                message: 'What is the salary of the role',
+                name: 'salary'
+            },
+            {
+                type: 'list',
+                message: 'What department is this role a part of',
+                name: 'department_id',
+                choices: departmentChoice
+            }
+        ]).then(role => {
+            db.addRole(role).then(() => console.log('Role added')).then(() => init())
+        })
+    })
+}
+
 // Update role
 function updateRole() {
     db.findEmployees().then(([rows]) => {
@@ -196,7 +228,7 @@ function updateRole() {
 
 // View departments
 function viewDepartments() {
-    db.findAllDepartments().then(([rows]) => {
+    db.viewDepartments().then(([rows]) => {
         let departments = rows;
         console.table(departments);
     }).then(() => init());
